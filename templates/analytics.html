@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5" style="max-width: 800px; padding: 20px; color: #fff;">
+    <h2 class="mb-4">Waste Analytics Dashboard</h2>
+    <p class="text-muted">Visualizations for registered plastic waste data tracking metrics.</p>
+
+    <!-- Chart Container Box -->
+    <div style="background-color: #1a1f2c; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+        <h4 style="text-align: center; margin-bottom: 20px;">Plastic Collection Breakdown (in kg)</h4>
+        <canvas id="wasteChart" width="400" height="200"></canvas>
+    </div>
+</div>
+<!-- Load your local file instead of an online web link -->
+{% load static %}
+<script>
+!function(t,e){"object"==typeof exports&&"undefined"!=typeof module?module.exports=e():"function"==typeof define&&define.amd?define(e):(t="undefined"!=typeof globalThis?globalThis:t||self).Chart=e()}(this,(function(){"use strict";return function(t,e){this.ctx=t,this.config=e,this.render=function(){var t=this.ctx,e=this.config.data,n=e.labels,i=e.datasets[0].data,a=this.ctx.canvas.width,s=this.ctx.canvas.height-40,r=Math.max.apply(Math,i)||1,o=a/n.length;t.clearRect(0,0,a,this.ctx.canvas.height),n.forEach((function(e,n){var c=i[n]||0,h=c/r*s,l=n*o+10,u=o-20,d=this.config.data.datasets[0].backgroundColor[n]||"#4bc0c0";t.fillStyle=d,t.fillRect(l,s-h+20,u,h),t.fillStyle="#fff",t.textAlign="center",t.fillText(c+" kg",l+u/2,s-h+15),t.fillText(e,l+u/2,s+35)}),this)},setTimeout(this.render.bind(this),50)}}));
+</script>
+
+
+<script>
+    // Pull the data securely from Django backend context
+    const chartLabels = {{ labels|safe|default:"[]" }};
+    const chartData = {{ weights|safe|default:"[]" }};
+    const ctx = document.getElementById('wasteChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar', // Type options: 'bar', 'pie', 'doughnut', 'line'
+        data: {
+            labels: chartLabels.length ? chartLabels : ['No Data Available'],
+            datasets: [{
+                label: 'Total Weight Collected (kg)',
+                data: chartData.length ? chartData : [0],
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 99, 132, 0.6)'
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 99, 132, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                    ticks: { color: '#fff' }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#fff' }
+                }
+            },
+            plugins: {
+                legend: { labels: { color: '#fff' } }
+            }
+        }
+    });
+</script>
+{% endblock %}

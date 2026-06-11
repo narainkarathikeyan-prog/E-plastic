@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5" style="color: #fff;">
+    <h2>EcoChain Management Dashboard</h2>
+    
+    <!-- Row Layout Grid Containers -->
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-top: 30px;">
+        
+        <!-- Left Column: History Data Logs Table -->
+        <div style="background-color: #1a1f2c; padding: 20px; border-radius: 8px;">
+            <h4>Recent Submissions History</h4>
+            <table class="table" style="color: #fff; width: 100%; margin-top: 15px;">
+                <thead>
+                    <tr style="border-bottom: 2px solid #2d3748;">
+                        <th>User Phone</th>
+                        <th>Type</th>
+                        <th>Weight</th>
+                        <th>Center</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sub in submissions %}
+                    <tr style="border-bottom: 1px solid #2d3748;">
+                        <td>{{ sub.submitter_phone }}</td>
+                        <td>{{ sub.plastic_type.code }}</td>
+                        <td>{{ sub.weight_kg }} kg</td>
+                        <td style="white-space: nowrap;">{{ sub.collection_center.name }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" class="text-muted">No recent submission records found.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Right Column: Operational System Reports -->
+       <div style="background-color: #1a1f2c; padding: 20px; border-radius: 8px;">
+    <h4>Mining Activity Log Reports</h4>
+    <ul style="list-style: none; padding: 0; margin-top: 15px;">
+       {% for report in reports %}
+<li style="padding: 15px 0; border-bottom: 1px solid #2d3748;">
+    <div style="display: flex; gap: 8px; margin-bottom: 8px; font-size: 0.75rem;">
+        <span style="background-color: #2d3748; color: #4bc0c0; padding: 2px 8px; border-radius: 4px; font-weight: bold;">
+            {{ report.category }}
+        </span>
+        <span style="background-color: rgba(54, 162, 235, 0.2); color: #36a2eb; padding: 2px 8px; border-radius: 4px;">
+            Trend: {{ report.trend }}
+        </span>
+    </div>
+    <strong style="color: #fff; display: block; font-size: 1.05rem; margin-bottom: 4px;">{{ report.title }}</strong>
+    <p style="color: #a0aec0; font-size: 0.9rem; margin: 0; line-height: 1.4;">{{ report.insight }}</p>
+</li>
+{% empty %}
+<li class="text-muted" style="padding: 10px 0;">No operational logs generated yet.</li>
+{% endfor %}
+    </ul>
+</div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Track Submission{% endblock %}
+{% block content %}
+<section class="page-hero mini-hero">
+  <div class="page-hero-content">
+    <span class="section-tag">🔍 Tracking</span>
+    <h1>Track Your Submission</h1>
+    <p>Enter your tracking ID to check the status of your e-waste submission.</p>
+  </div>
+</section>
+
+<section class="section track-section">
+  <div class="track-layout">
+    <div class="track-form-card">
+      <h2>Enter Tracking ID</h2>
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <label>Tracking ID (e.g., 12)</label>
+          <input type="number" name="tracking_id" placeholder="Enter your submission ID" min="1" required />
+        </div>
+        <button type="submit" class="btn-primary btn-full">Track →</button>
+      </form>
+    </div>
+
+    {% if submission %}
+    <div class="track-result">
+      <div class="track-result-header">
+        <h3>Submission #{{ submission.id }}</h3>
+        <span class="status-badge status-{{ submission.status }}">{{ submission.status }}</span>
+      </div>
+
+      <!-- Progress bar -->
+      {% with statuses="pending,collected,processing,recycled" %}
+            <span class="status-badge status-{{ submission.status|lower }}"></span>
+            <div class="progress-step {% if submission.status == step %}active{% endif %}">
+                <div class="progress-dot"></div>
+                <div class="progress-label">{{ step|title }}</div>
+            </div>
+        {% endwith %}
+      <div class="track-details">
+        <div class="track-row"><span>Submitter</span><strong>{{ submission.submitter_name }}</strong></div>
+        <div class="track-row"><span>Email</span><strong>{{ submission.submitter_email }}</strong></div>
+        <div class="track-row"><span>Plastic Type</span><strong>{{ submission.plastic_type.code }} — {{ submission.plastic_type.name }}</strong></div>
+        <div class="track-row"><span>Weight</span><strong>{{ submission.weight_kg }} kg</strong></div>
+        <div class="track-row"><span>Collection Center</span><strong>{{ submission.collection_center.name }}</strong></div>
+        <div class="track-row"><span>City</span><strong>{{ submission.collection_center.city }}</strong></div>
+        <div class="track-row"><span>Submitted</span><strong>{{ submission.submitted_at|date:"d M Y, H:i" }}</strong></div>
+        <div class="track-row highlight-row"><span>Green Points Earned</span><strong>⭐ {{ submission.points_earned }} pts</strong></div>
+      </div>
+
+      {% if submission.description %}
+      <div class="track-note">
+        <strong>Note:</strong> {{ submission.description }}
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Status legend -->
+    <div class="status-legend">
+      <h3>Status Guide</h3>
+      <div class="legend-item"><span class="status-badge status-pending">pending</span> — Waiting for collection pickup</div>
+      <div class="legend-item"><span class="status-badge status-collected">collected</span> — Picked up by center</div>
+      <div class="legend-item"><span class="status-badge status-processing">processing</span> — Being sorted and processed</div>
+      <div class="legend-item"><span class="status-badge status-recycled">recycled</span> — Successfully recycled ✓</div>
+      <div class="legend-item"><span class="status-badge status-rejected">rejected</span> — Could not be processed</div>
+    </div>
+  </div>
+</section>
+{% endblock %}

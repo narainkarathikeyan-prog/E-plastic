@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% block title %}Submit E-Waste{% endblock %}
+{% block content %}
+<section class="page-hero mini-hero">
+  <div class="page-hero-content">
+    <span class="section-tag">♻ Contribute</span>
+    <h1>Submit Your E-Waste</h1>
+    <p>Fill in the details below to register your plastic waste and earn green points.</p>
+  </div>
+</section>
+
+<section class="section form-section">
+  <div class="form-layout">
+    <!-- Main Form -->
+    <div class="form-card">
+      <h2 class="form-title">Waste Registration Form</h2>
+      <form method="post" action="{% url 'submit_waste' %}" id="wasteForm">
+        {% csrf_token %}
+    <div class="form-grid">
+        <!-- 1. Full Name -->
+        <div class="form-group">
+            <label class="form-label">Full Name *</label>
+            <input type="text" name="submitter_name" class="form-control" placeholder="e.g., Rahul Sharma" required>
+        </div>
+
+        <!-- 2. Email Address -->
+        <div class="form-group">
+            <label class="form-label">Email Address *</label>
+            <input type="email" name="submitter_email" class="form-control" placeholder="rahul@example.com" required>
+        </div>
+
+        <!-- 3. Phone Number -->
+        <div class="form-group">
+            <label class="form-label">Phone Number *</label>
+            <input type="text" name="phone_number" class="form-control" placeholder="+91 XXXXX XXXXX" required>
+        </div>
+
+        <!-- 4. Weight (kg) -->
+        <div class="form-group">
+            <label class="form-label">Weight (kg) *</label>
+            <input type="number" step="0.1" name="weight_kg" class="form-control" placeholder="e.g., 5.5" required>
+        </div>
+
+        <!-- 5. Plastic Type Dropdown -->
+        <div class="form-group">
+            <label class="form-label">Plastic Type *</label>
+            <select name="plastic_type_id" id="plastic_type_id"class="form-control">
+                <option value="">-- Select Type --</option>
+                {% for type in plastic_types %}
+                    <option value="{{ type.id }}">{{ type.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- 6. Collection Center Dropdown -->
+        <div class="form-group">
+            <label class="form-label">Collection Center *</label>
+            <select name="center_id" id="Collection_Center_id" class="form-control" required>
+                <option value="">-- Select 
+                  Center --</option>
+                {% for center in collection_centers %}
+                    <option value="{{ center.id }}">{{ center.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- 7. Description (Optional) -->
+        <div class="form-group full-width">
+            <label class="form-label">Description (optional)</label>
+            <textarea name="description" class="form-control" placeholder="Describe the plastic waste (e.g., old bottles, packaging)..."></textarea>
+        </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" class="submit-btn">Submit & Earn Points →</button>
+</form>
+    </div>
+
+    <!-- Sidebar Info -->
+    <div class="form-sidebar">
+      <div class="sidebar-card">
+        <h3>🎯 Green Points System</h3>
+        <p>Earn <strong>10 points per kg</strong> of plastic submitted. Redeem for eco-friendly rewards!</p>
+        <div class="points-table">
+          <div class="pt-row"><span>0.5 kg</span><span>5 pts</span></div>
+          <div class="pt-row"><span>5 kg</span><span>50 pts</span></div>
+          <div class="pt-row"><span>20 kg</span><span>200 pts</span></div>
+          <div class="pt-row highlight"><span>50+ kg</span><span>500+ pts</span></div>
+        </div>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>♻ Plastic Types Guide</h3>
+        {% for p in plastic_types %}
+        <div class="type-row">
+          <span class="type-badge">{{ p.code }}</span>
+          <span class="type-name">{{ p.name }}</span>
+          <span class="type-tag {% if p.recyclable %}green{% else %}red{% endif %}">
+            {% if p.recyclable %}✓{% else %}✗{% endif %}
+          </span>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="sidebar-card tip-card">
+        <h3>💡 Submission Tips</h3>
+        <ul>
+          <li>Clean and dry plastics are processed faster</li>
+          <li>Sort by type for higher rewards</li>
+          <li>Larger batches get bonus points</li>
+          <li>Save your tracking ID after submission</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const weightInput = document.querySelector('input[name="weight"]');
+const preview = document.getElementById('pointsPreview');
+const pointsVal = document.getElementById('pointsVal');
+
+weightInput.addEventListener('input', () => {
+  const w = parseFloat(weightInput.value) || 0;
+  if (w > 0) {
+    preview.style.display = 'flex';
+    pointsVal.textContent = Math.floor(w * 10);
+  } else {
+    preview.style.display = 'none';
+  }
+});
+</script>
+{% endblock %}

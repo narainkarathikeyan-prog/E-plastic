@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block title %}Data Mining Reports{% endblock %}
+{% block content %}
+<section class="page-hero mini-hero">
+  <div class="page-hero-content">
+    <span class="section-tag">🔬 Intelligence</span>
+    <h1>Data Mining Reports</h1>
+    <p>AI-powered pattern recognition and predictive analytics for e-plastic management.</p>
+  </div>
+</section>
+
+<section class="section">
+  <!-- Mining Techniques -->
+  <div class="techniques-grid">
+    <div class="technique-card">
+      <div class="tech-icon">🧮</div>
+      <h3>Classification</h3>
+      <p>Categorizing plastic types using decision tree and random forest models with 94% accuracy.</p>
+    </div>
+    <div class="technique-card">
+      <div class="tech-icon">📈</div>
+      <h3>Trend Analysis</h3>
+      <p>Time-series forecasting to predict collection volumes and seasonal patterns.</p>
+    </div>
+    <div class="technique-card">
+      <div class="tech-icon">🗂</div>
+      <h3>Clustering</h3>
+      <p>K-means clustering of geographic submission data for optimal center placement.</p>
+    </div>
+    <div class="technique-card">
+      <div class="tech-icon">⚠</div>
+      <h3>Anomaly Detection</h3>
+      <p>Identifying unusual waste patterns that may indicate industrial dumping or contamination.</p>
+    </div>
+    <div class="technique-card">
+      <div class="tech-icon">🔮</div>
+      <h3>Predictive Mining</h3>
+      <p>Machine learning models to forecast next-quarter recycling rates and resource needs.</p>
+    </div>
+    <div class="technique-card">
+      <div class="tech-icon">🕸</div>
+      <h3>Association Rules</h3>
+      <p>Apriori algorithm to find co-occurring plastic types and submission behaviors.</p>
+    </div>
+  </div>
+
+  <!-- Reports List -->
+  <h2 class="section-mini-title" style="margin-top:3rem">📋 Generated Reports</h2>
+  <div class="reports-grid">
+    {% for r in reports %}
+    <div class="report-card trend-{{ r.trend }}">
+      <div class="report-header">
+        <span class="report-cat">{{ r.category }}</span>
+        <span class="report-trend">
+          {% if r.trend == 'up' %}↑ Increasing{% elif r.trend == 'down' %}↓ Decreasing{% else %}→ Stable{% endif %}
+        </span>
+      </div>
+      <h3 class="report-title">{{ r.title }}</h3>
+      <p class="report-insight">{{ r.insight }}</p>
+      <div class="report-footer">
+        <span class="report-date">{{ r.created_at|date:"d M Y" }}</span>
+        <button class="btn-sm" onclick="this.closest('.report-card').classList.toggle('expanded')">View Details</button>
+      </div>
+      <div class="report-detail">
+        <strong>Full Analysis:</strong> {{ r.description }}
+      </div>
+    </div>
+    {% empty %}
+    <div class="empty-note">No reports generated yet. <a href="/admin/">Add via admin →</a></div>
+    {% endfor %}
+  </div>
+
+  <!-- Real-time mining results -->
+  <h2 class="section-mini-title" style="margin-top:3rem">⚡ Live Mining Results</h2>
+  <div id="liveInsights" class="insights-grid">
+    <div class="loading-spinner">Running data mining algorithms...</div>
+  </div>
+</section>
+{% endblock %}
+{% block extra_js %}
+<script>
+fetch('/api/mining/')
+  .then(r => r.json())
+  .then(data => {
+    const grid = document.getElementById('liveInsights');
+    grid.innerHTML = data.insights.map(ins => `
+      <div class="insight-card trend-${ins.trend}">
+        <div class="ins-header">
+          <span class="ins-cat">${ins.category}</span>
+          <span class="ins-trend">${ins.trend === 'up' ? '↑' : ins.trend === 'down' ? '↓' : '→'}</span>
+        </div>
+        <div class="ins-title">${ins.title}</div>
+        <div class="ins-value">${ins.value}</div>
+        <div class="ins-desc">${ins.description}</div>
+      </div>
+    `).join('');
+  });
+</script>
+{% endblock %}

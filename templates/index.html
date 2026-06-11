@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">🌱 Data-Driven E-Waste Solution</div>
+    <h1 class="hero-title">
+      Recycle Smarter.<br>
+      <span class="hero-accent">Mine Better Insights.</span>
+    </h1>
+    <p class="hero-desc">
+      EcoChain is India's advanced e-plastic management platform combining waste collection,
+      real-time tracking, and AI-powered data mining to build a cleaner future.
+    </p>
+    <div class="hero-actions">
+      <a href="{% url 'submit_waste' %}" class="btn-primary">Submit E-Waste →</a>
+      <a href="{% url 'dashboard' %}" class="btn-outline">View Analytics</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="stat-card floating" style="top:10%;left:5%">
+      <div class="stat-icon">♻</div>
+      <div class="stat-val">{{ total_weight }}<small>kg</small></div>
+      <div class="stat-label">Total Collected</div>
+    </div>
+    <div class="stat-card floating" style="top:40%;right:0%">
+      <div class="stat-icon">🌿</div>
+      <div class="stat-val">{{ co2_saved }}<small>kg</small></div>
+      <div class="stat-label">CO₂ Saved</div>
+    </div>
+    <div class="stat-card floating" style="bottom:10%;left:15%">
+      <div class="stat-icon">📍</div>
+      <div class="stat-val">{{ active_centers }}</div>
+      <div class="stat-label">Active Centers</div>
+    </div>
+    <div class="hero-globe">
+      <div class="globe-ring"></div>
+      <div class="globe-ring ring2"></div>
+      <div class="globe-core">♻</div>
+    </div>
+  </div>
+</section>
+
+<!-- Impact Stats -->
+<section class="impact-bar">
+  <div class="impact-grid">
+    <div class="impact-item">
+      <div class="impact-num" data-target="{{ total_submissions }}">0</div>
+      <div class="impact-lbl">Total Submissions</div>
+    </div>
+    <div class="impact-item">
+      <div class="impact-num" data-target="{{ total_weight }}">0</div>
+      <div class="impact-lbl">Kg Collected</div>
+    </div>
+    <div class="impact-item">
+      <div class="impact-num" data-target="{{ recycled_count }}">0</div>
+      <div class="impact-lbl">Items Recycled</div>
+    </div>
+    <div class="impact-item">
+      <div class="impact-num" data-target="{{ co2_saved }}">0</div>
+      <div class="impact-lbl">Kg CO₂ Saved</div>
+    </div>
+    <div class="impact-item">
+      <div class="impact-num" data-target="{{ active_centers }}">0</div>
+      <div class="impact-lbl">Collection Centers</div>
+    </div>
+  </div>
+</section>
+
+<!-- How it Works -->
+<section class="section how-section">
+  <div class="section-header">
+    <span class="section-tag">Process</span>
+    <h2>How EcoChain Works</h2>
+    <p>A seamless end-to-end e-plastic lifecycle management system</p>
+  </div>
+  <div class="steps-grid">
+    <div class="step-card">
+      <div class="step-num">01</div>
+      <div class="step-icon">📦</div>
+      <h3>Submit E-Waste</h3>
+      <p>Register your plastic waste — type, weight, and nearest collection center. Earn green points instantly.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">02</div>
+      <div class="step-icon">🏭</div>
+      <h3>Collect & Process</h3>
+      <p>Our network of certified centers collects, sorts, and processes your e-plastic waste safely.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">03</div>
+      <div class="step-icon">📊</div>
+      <h3>Data Mining</h3>
+      <p>Advanced algorithms analyze patterns, predict trends, and generate actionable recycling insights.</p>
+    </div>
+    <div class="step-card">
+      <div class="step-num">04</div>
+      <div class="step-icon">🌱</div>
+      <h3>Impact Report</h3>
+      <p>Track your environmental contribution — CO₂ saved, energy conserved, and trees equivalent.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Plastic Types -->
+<section class="section plastic-section">
+  <div class="section-header">
+    <span class="section-tag">Categories</span>
+    <h2>E-Plastic Classification</h2>
+    <p>We handle all 7 categories of recyclable plastics</p>
+  </div>
+  <div class="plastic-grid">
+    {% for plastic in plastic_types %}
+    <div class="plastic-card {{ plastic.code }}">
+      <div class="plastic-badge">{{ plastic.code }}</div>
+      <div class="plastic-name">{{ plastic.name }}</div>
+      <div class="plastic-meta">
+        <span class="tag {% if plastic.recyclable %}tag-green{% else %}tag-red{% endif %}">
+          {% if plastic.recyclable %}♻ Recyclable{% else %}⚠ Non-Recyclable{% endif %}
+        </span>
+        <span class="tag tag-gray">Hazard: {{ plastic.hazard_level }}/5</span>
+      </div>
+      <p class="plastic-desc">{{ plastic.description }}</p>
+    </div>
+    {% empty %}
+    <div class="empty-note">No plastic types configured yet. <a href="/admin/">Add via admin →</a></div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <h2>Ready to Make an Impact?</h2>
+    <p>Join thousands of eco-warriors turning plastic waste into a sustainable future.</p>
+    <div class="cta-btns">
+      <a href="{% url 'submit_waste' %}" class="btn-primary btn-lg">Submit Your Waste</a>
+      <a href="{% url 'dashboard' %}" class="btn-ghost">Explore Analytics →</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+{% block extra_js %}
+<script>
+// Animate numbers on scroll
+const nums = document.querySelectorAll('.impact-num');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const target = parseFloat(el.dataset.target) || 0;
+      let current = 0;
+      const step = target / 60;
+      const timer = setInterval(() => {
+        current += step;
+        if (current >= target) { current = target; clearInterval(timer); }
+        el.textContent = Number.isInteger(target) ? Math.floor(current) : current.toFixed(1);
+      }, 16);
+    }
+  });
+}, { threshold: 0.3 });
+nums.forEach(n => observer.observe(n));
+</script>
+{% endblock %}

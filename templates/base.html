@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}E-Plastic Management{% endblock %} | EcoChain</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-brand">
+    <div class="brand-icon">♻</div>
+    <span class="brand-name">EcoChain</span>
+    <span class="brand-tag">E-Plastic Management</span>
+  </div>
+  <div class="nav-links">
+    <a href="{% url 'index' %}" class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}">Home</a>
+    <a href="{% url 'submit_waste' %}" class="nav-link {% if request.resolver_match.url_name == 'submit_waste' %}active{% endif %}">Submit Waste</a>
+    <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
+    <a href="{% url 'analytics_page' %}" class="nav-link {% if request.resolver_match.url_name == 'analytics_page' %}active{% endif %}">Analytics</a>
+    <a href="{% url 'centers' %}" class="nav-link {% if request.resolver_match.url_name == 'centers' %}active{% endif %}">Centers</a>
+    <a href="{% url 'reports' %}" class="nav-link {% if request.resolver_match.url_name == 'reports' %}active{% endif %}">Reports</a>
+    <a href="{% url 'track' %}" class="nav-cta">Track Submission</a>
+  </div>
+  <button class="nav-toggle" id="navToggle">☰</button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="{% url 'index' %}">Home</a>
+  <a href="{% url 'submit_waste' %}">Submit Waste</a>
+  <a href="{% url 'dashboard' %}">Dashboard</a>
+  <a href="{% url 'analytics_page' %}">Analytics</a>
+  <a href="{% url 'centers' %}">Centers</a>
+  <a href="{% url 'reports' %}">Reports</a>
+  <a href="{% url 'track' %}">Track</a>
+</div>
+
+{% if messages %}
+<div class="messages-container">
+  {% for msg in messages %}
+  <div class="message message-{{ msg.tags }}">
+    <span>{{ msg }}</span>
+    <button onclick="this.parentElement.remove()">✕</button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<main>
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="brand-icon-sm">♻</span>
+      <strong>EcoChain</strong> — E-Plastic Management & Data Mining Platform
+    </div>
+    <div class="footer-links">
+      <a href="{% url 'index' %}">Home</a>
+      <a href="{% url 'submit_waste' %}">Submit</a>
+      <a href="{% url 'dashboard' %}">Dashboard</a>
+      <a href="{% url 'analytics_page' %}">Analytics</a>
+      <a href="/admin/">Admin</a>
+    </div>
+    <div class="footer-note">© 2024 EcoChain. Building a sustainable future through data-driven recycling.</div>
+  </div>
+</footer>
+
+<script src="{% static 'js/main.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>
